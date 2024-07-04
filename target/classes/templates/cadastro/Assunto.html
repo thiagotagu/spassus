@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Avaliação spassus
+	</title>
+	<link rel="shortcut icon" type="image/png" href="../../assets/images/logos/favicon.png" />
+	<link rel="stylesheet" th:href="@{/assets/css/styles.min.css}" />
+	<link rel="stylesheet" th:href="@{/assets/css/bootstrap-duallistbox.css}" />
+
+	<link rel="stylesheet" th:href="@{/assets/css/jquery-ui.css}">
+
+</head>
+
+<body>
+
+	<input type="hidden" id="crud" value="assunto">
+	<!--  Body Wrapper -->
+	<div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+		data-sidebar-position="fixed" data-header-position="fixed">
+		<!-- Sidebar Start -->
+		<aside class="left-sidebar">
+			<!-- Sidebar scroll-->
+			<div>
+				<!-- Sidebar navigation-->
+				<div th:replace="fragments/menu :: menu"></div>
+				<!-- End Sidebar navigation -->
+			</div>
+			<!-- End Sidebar scroll-->
+		</aside>
+		<!--  Sidebar End -->
+		<!--  Main wrapper -->
+		<div class="body-wrapper">
+			<div class="container-fluid">
+				<div class="row" th:if="${messageError}" id="msgError">
+					<div class="alert alert-error" role="alert" th:text="${messageError}">
+					</div>
+				</div>
+
+				<div class="row" th:if="${message}" id="msgSucesso">
+					<div class="alert alert-success" role="alert" th:text="${message}">
+					</div>
+				</div>
+				<div class="row">
+					<div class="d-flex align-items-center gap-2">
+						<button type="button" id="btnNovo" class="btn btn-info">Adicionar Assunto</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col">Descricao</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="assunto : ${assuntos}" th:style="${assunto}!=null  ? 'font-weight: bold;'">
+							<td th:text="${assunto.id}" />
+							<td th:text="${assunto.descricao}" />
+							<td>
+								<div class="row align-items-start">
+									<div class="col-1">
+										<span>
+											<a class="page-link"
+												th:href="@{/assunto/__${assuntos.number}__/__${assunto.id}__}"
+												alt="Alterar">
+												<i class="ti ti-slice nav-small-cap-icon fs-5"></i>
+											</a>
+										</span>
+									</div>
+									<div class="col-2">
+										<span>
+											<a class="page-link"
+												th:href="|javascript:CrudController.deletar(${assunto.id})|"
+												alt="Deletar">
+												<i class="ti ti-trash nav-small-cap-icon fs-5"></i>
+											</a>
+										</span>
+									</div>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<nav aria-label="Page navigation example">
+					<ul class="pagination d-flex justify-content-center">
+						<li class="page-item" th:if="${assuntos.hasPrevious()}">
+							<a class="page-link" href="#" aria-label="Previous">
+								<span aria-hidden="true">&laquo;</span>
+							</a>
+						</li>
+						<th:block th:each="i: ${#numbers.sequence(0, assuntos.totalPages - 1)}">
+							<li th:if="${assuntos.number == i}" class="page-item  active">
+								<a class="page-link" href="#">[[${i}+1]]</a>
+							</li>
+							<li th:unless="${assuntos.number == i}" class="page-item "><a class="page-link"
+									th:href="@{/assunto(page=${i},size=${assuntos.size})}">[[${i}+1]]</a>
+							</li>
+						</th:block>
+						<li class="page-item" th:if="${assuntos.hasNext()}">
+							<a class="page-link" href="#" aria-label="Next">
+								<span aria-hidden="true">&raquo;</span>
+							</a>
+						</li>
+					</ul>
+				</nav>
+			</div>
+
+
+			<div class="row" id="formulario" style="display: none;">
+
+				<div class="container px-4">
+					<div class="row gx-10">
+						<div class="col">
+							<div class="p-3 border bg-light">
+								<h5 class="card-title fw-semibold mb-4">assunto</h5>
+								<div class="card">
+									<div class="card-body">
+
+										<form class="row g-3 needs-validation" action="#" th:action="@{/assunto}"
+											th:object="${assunto}" method="post">
+											<div class="col-md-4">
+												<label for="titulo" class="form-label">descricao</label>
+												<input type="hidden" class="form-control" id="id" th:field="*{id}">
+												<input type="text" class="form-control" id="nome" th:field="*{descricao}"
+													required>
+												<div class="invalid-feedback">
+													Favor informar a descricao
+												</div>
+											</div>
+											<div class="col-12 d-flex justify-content-end">
+
+												<div class="p-2"><button class="btn btn-primary"
+														type="submit">Gravar</button></div>
+												<div class="p-2"><button class="btn btn-danger" type="reset"
+														id="btnCancelar">Cancelar</button></div>
+											</div>
+
+										</form>
+
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+
+	<script src="../../assets/libs/jquery/dist/jquery.min.js"></script>
+	<script src="../../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="../../assets/js/sidebarmenu.js"></script>
+	<script src="../../assets/js/app.min.js"></script>
+	<script src="../../assets/libs/jquery/dist/jquery-ui.js"></script>
+	<script src="../../assets/libs/jquery/dist/jquery.mask.min.js"></script>
+	<script src="../../assets/libs/jquery/dist/jquery.bootstrap-duallistbox.js"></script>
+
+	<script src="../../controller/crudController.js"></script>
+</body>
+
+</html>
